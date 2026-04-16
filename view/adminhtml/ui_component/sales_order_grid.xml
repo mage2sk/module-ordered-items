@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Panth Infotech. All rights reserved.
+ * Adds "Order Items" column to the admin Sales Order Grid.
+ */
+-->
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <columns name="sales_order_columns">
+        <column name="order_items"
+                class="Panth\OrderedItems\Ui\Component\Listing\Column\OrderItems"
+                sortOrder="200">
+            <settings>
+                <label translate="true">Order Items</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+                <sortable>false</sortable>
+                <filter>false</filter>
+                <visible>true</visible>
+            </settings>
+        </column>
+    </columns>
+</listing>

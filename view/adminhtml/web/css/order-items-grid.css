@@ -1,0 +1,76 @@
+/**
+ * Panth OrderedItems — Admin Order Grid: Order Items Column Styles
+ */
+
+.panth-order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 220px;
+    max-width: 360px;
+}
+
+.panth-order-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.panth-order-item:last-of-type {
+    border-bottom: none;
+}
+
+.panth-order-item-thumb {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid #e5e5e5;
+    background: #fafafa;
+}
+
+.panth-order-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.panth-order-item-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+
+.panth-order-item-meta {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.3;
+}
+
+.panth-order-item-meta em {
+    font-style: normal;
+    color: #aaa;
+}
+
+.panth-order-items-more {
+    font-size: 11px;
+    color: #eb5202;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 2px 0;
+    cursor: pointer;
+}
+
+.panth-order-items-more:hover {
+    text-decoration: underline;
+    color: #cc4500;
+}
