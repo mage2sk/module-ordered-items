@@ -29,8 +29,6 @@ Stop clicking into every order just to see what was purchased. **Panth Ordered I
 
 ### Paginated Popup for Large Orders (50+ Items)
 
-https://github.com/user-attachments/assets/order-items-popup-demo.mp4
-
 https://github.com/mage2sk/module-ordered-items/raw/main/docs/order-items-popup-demo.mp4
 
 *Orders with 10+ items show a "View all" link that opens a paginated popup with page size selector (10/20/50/All), navigation, thumbnails, SKUs, prices, and fulfillment badges — grid stays compact no matter how many items.*
