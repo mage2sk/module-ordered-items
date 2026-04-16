@@ -19,9 +19,15 @@
                 </field>
                 <field id="max_visible" translate="label comment" type="text" sortOrder="20"
                        showInDefault="1" showInWebsite="0" showInStore="0">
-                    <label>Max Visible Items</label>
+                    <label>Max Visible Items (Inline)</label>
                     <validate>validate-digits</validate>
-                    <comment>Number of items shown before "show more" link. Default: 3</comment>
+                    <comment>Items shown inline before "show more/less". Default: 3</comment>
+                </field>
+                <field id="popup_threshold" translate="label comment" type="text" sortOrder="25"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Popup Threshold</label>
+                    <validate>validate-digits</validate>
+                    <comment>When an order has more than this many items, "View all" opens a paginated popup instead of expanding inline. Default: 10</comment>
                 </field>
             </group>
 

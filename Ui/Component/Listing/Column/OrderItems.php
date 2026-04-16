@@ -89,6 +89,7 @@ class OrderItems extends Column
         }
 
         $maxVisible = (int) ($this->scopeConfig->getValue(self::CFG . 'general/max_visible') ?: 3);
+        $popupThreshold = (int) ($this->scopeConfig->getValue(self::CFG . 'general/popup_threshold') ?: 10);
         $showThumb = $this->cfg('display/show_thumbnail');
         $showSku = $this->cfg('display/show_sku');
         $showPrice = $this->cfg('display/show_price');
@@ -99,14 +100,16 @@ class OrderItems extends Column
         $showProductLink = $this->cfg('display/show_product_link');
 
         $total = count($items);
+        $usePopup = $total > $popupThreshold;
         $totalQty = 0;
         foreach ($items as $i) {
             $totalQty += (int) $i->getQtyOrdered();
         }
 
-        $html = '<div class="panth-oi-wrap" onclick="event.stopPropagation();">';
+        $inlineLimit = $usePopup ? $maxVisible : $total;
+        $wrapId = 'panth-oi-wrap-' . $orderId;
+        $html = '<div class="panth-oi-wrap" id="' . $wrapId . '" onclick="event.stopPropagation();">';
 
-        // Summary
         if ($showSummary) {
             $html .= '<div class="panth-oi-summary">';
             $html .= '<span class="panth-oi-badge">' . $total . ' item' . ($total > 1 ? 's' : '') . '</span>';
@@ -117,7 +120,15 @@ class OrderItems extends Column
         $count = 0;
         foreach ($items as $orderItem) {
             $count++;
-            $hidden = $count > $maxVisible ? ' data-panth-oi-hidden style="display:none;"' : '';
+            if ($count > $inlineLimit) {
+                break;
+            }
+
+            $isHidden = $count > $maxVisible && !$usePopup;
+            $hidden = $isHidden ? ' data-panth-oi-hidden style="display:none;"' : '';
+            if ($usePopup && $count > $maxVisible) {
+                break; // Don't render more than maxVisible inline for popup mode
+            }
 
             $name = $this->esc((string) $orderItem->getName());
             $sku = $this->esc((string) $orderItem->getSku());
@@ -127,7 +138,6 @@ class OrderItems extends Column
 
             $html .= '<div class="panth-oi-item"' . $hidden . '>';
 
-            // Thumbnail
             if ($showThumb) {
                 $thumbUrl = $this->getThumbUrl($orderItem);
                 if ($showProductLink && $productUrl) {
@@ -140,20 +150,16 @@ class OrderItems extends Column
             }
 
             $html .= '<div class="panth-oi-info">';
-
-            // Name
             if ($showProductLink && $productUrl) {
                 $html .= '<a href="' . $this->esc($productUrl) . '" target="_blank" class="panth-oi-name" title="' . $name . '">' . $name . '</a>';
             } else {
                 $html .= '<span class="panth-oi-name">' . $name . '</span>';
             }
 
-            // SKU
             if ($showSku) {
                 $html .= '<div class="panth-oi-meta"><span class="panth-oi-sku">SKU: ' . $sku . '</span></div>';
             }
 
-            // Options
             if ($showOptions) {
                 $options = $this->getItemOptions($orderItem);
                 if (!empty($options)) {
@@ -166,34 +172,20 @@ class OrderItems extends Column
                 }
             }
 
-            // Price + Qty
             if ($showQty || $showPrice) {
                 $html .= '<div class="panth-oi-price-line">';
                 if ($showQty) {
                     $html .= '<span class="panth-oi-qty-badge">Qty: ' . $qty . '</span>';
                 }
                 if ($showPrice) {
-                    $price = $this->priceCurrency->format(
-                        (float) $orderItem->getPrice(),
-                        false,
-                        PriceCurrencyInterface::DEFAULT_PRECISION,
-                        null,
-                        $currencyCode
-                    );
-                    $rowTotal = $this->priceCurrency->format(
-                        (float) $orderItem->getRowTotal(),
-                        false,
-                        PriceCurrencyInterface::DEFAULT_PRECISION,
-                        null,
-                        $currencyCode
-                    );
+                    $price = $this->priceCurrency->format((float) $orderItem->getPrice(), false, PriceCurrencyInterface::DEFAULT_PRECISION, null, $currencyCode);
+                    $rowTotal = $this->priceCurrency->format((float) $orderItem->getRowTotal(), false, PriceCurrencyInterface::DEFAULT_PRECISION, null, $currencyCode);
                     $html .= '<span class="panth-oi-price">' . $price . '</span>';
                     $html .= '<span class="panth-oi-row-total">' . $rowTotal . '</span>';
                 }
                 $html .= '</div>';
             }
 
-            // Fulfillment
             if ($showFulfillment) {
                 $html .= $this->renderFulfillment($orderItem);
             }
@@ -202,11 +194,117 @@ class OrderItems extends Column
             $html .= '</div>'; // item
         }
 
-        if ($total > $maxVisible) {
+        // Show more/less toggle (for non-popup mode: 4 to popupThreshold items)
+        if ($total > $maxVisible && !$usePopup) {
             $remaining = $total - $maxVisible;
+            $html .= '<div class="panth-oi-toggle">';
             $html .= '<a href="#" class="panth-oi-more" '
-                . 'onclick="event.stopPropagation();this.parentNode.querySelectorAll(\'[data-panth-oi-hidden]\').forEach(function(e){e.style.display=\'flex\';});this.style.display=\'none\';return false;">'
+                . 'onclick="event.stopPropagation();var w=document.getElementById(\'' . $wrapId . '\');w.querySelectorAll(\'[data-panth-oi-hidden]\').forEach(function(e){e.style.display=\'flex\';});this.style.display=\'none\';this.nextElementSibling.style.display=\'inline\';return false;">'
                 . '+ ' . $remaining . ' more item' . ($remaining > 1 ? 's' : '') . '</a>';
+            $html .= '<a href="#" class="panth-oi-less" style="display:none;" '
+                . 'onclick="event.stopPropagation();var w=document.getElementById(\'' . $wrapId . '\');w.querySelectorAll(\'[data-panth-oi-hidden]\').forEach(function(e){e.style.display=\'none\';});this.style.display=\'none\';this.previousElementSibling.style.display=\'inline\';return false;">'
+                . 'Show less</a>';
+            $html .= '</div>';
+        }
+
+        if ($usePopup) {
+            $modalId = 'panth-oi-modal-' . $orderId;
+            $incrementId = $this->esc((string) $order->getIncrementId());
+            $orderTotal = $this->priceCurrency->format((float) $order->getGrandTotal(), false, PriceCurrencyInterface::DEFAULT_PRECISION, null, $currencyCode);
+
+            $html .= '<a href="#" class="panth-oi-more" '
+                . 'onclick="event.stopPropagation();var m=document.getElementById(\'' . $modalId . '\');m.style.display=\'flex\';panthOiPaginate(\'' . $modalId . '\',1);return false;">'
+                . 'View all ' . $total . ' items</a>';
+
+            // Modal
+            $html .= '<div id="' . $modalId . '" class="panth-oi-modal-backdrop" onclick="if(event.target===this){this.style.display=\'none\';}">';
+            $html .= '<div class="panth-oi-modal">';
+
+            // Header
+            $html .= '<div class="panth-oi-modal-header">';
+            $html .= '<div class="panth-oi-modal-title">';
+            $html .= '<h3>Order #' . $incrementId . '</h3>';
+            $html .= '<span class="panth-oi-modal-stats">' . $total . ' Items &middot; ' . $totalQty . ' Units &middot; ' . $orderTotal . '</span>';
+            $html .= '</div>';
+            $html .= '<button type="button" class="panth-oi-modal-close" onclick="event.stopPropagation();this.closest(\'.panth-oi-modal-backdrop\').style.display=\'none\';">&times;</button>';
+            $html .= '</div>';
+
+            // Toolbar: page size + pagination info
+            $html .= '<div class="panth-oi-modal-toolbar">';
+            $html .= '<div class="panth-oi-modal-perpage">';
+            $html .= '<label>Show:</label>';
+            $html .= '<select onchange="this.closest(\'.panth-oi-modal\').dataset.perPage=this.value;panthOiPaginate(\'' . $modalId . '\',1);">';
+            $html .= '<option value="10">10</option>';
+            $html .= '<option value="20" selected>20</option>';
+            $html .= '<option value="50">50</option>';
+            $html .= '<option value="all">All</option>';
+            $html .= '</select>';
+            $html .= '<span>per page</span>';
+            $html .= '</div>';
+            $html .= '<div class="panth-oi-modal-pageinfo" data-pageinfo></div>';
+            $html .= '<div class="panth-oi-modal-nav">';
+            $html .= '<button type="button" class="panth-oi-nav-btn" data-prev onclick="event.stopPropagation();panthOiPaginate(\'' . $modalId . '\',\'prev\');">&lsaquo; Prev</button>';
+            $html .= '<button type="button" class="panth-oi-nav-btn" data-next onclick="event.stopPropagation();panthOiPaginate(\'' . $modalId . '\',\'next\');">Next &rsaquo;</button>';
+            $html .= '</div>';
+            $html .= '</div>';
+
+            // Body with all items (pagination controlled via JS)
+            $html .= '<div class="panth-oi-modal-body" data-total="' . $total . '">';
+
+            $idx = 0;
+            foreach ($items as $modalItem) {
+                $mName = $this->esc((string) $modalItem->getName());
+                $mSku = $this->esc((string) $modalItem->getSku());
+                $mQty = (int) $modalItem->getQtyOrdered();
+                $mProductId = $modalItem->getProductId();
+                $mProductUrl = $mProductId ? $this->backendUrl->getUrl('catalog/product/edit', ['id' => $mProductId]) : '';
+
+                $html .= '<div class="panth-oi-modal-item" data-idx="' . $idx . '">';
+
+                if ($showThumb) {
+                    $thumbUrl = $this->getThumbUrl($modalItem);
+                    $html .= '<img src="' . $this->esc($thumbUrl) . '" alt="' . $mName . '" class="panth-oi-modal-thumb" loading="lazy">';
+                }
+
+                $html .= '<div class="panth-oi-modal-info">';
+                if ($showProductLink && $mProductUrl) {
+                    $html .= '<a href="' . $this->esc($mProductUrl) . '" target="_blank" class="panth-oi-modal-name">' . $mName . '</a>';
+                } else {
+                    $html .= '<span class="panth-oi-modal-name">' . $mName . '</span>';
+                }
+                $html .= '<div class="panth-oi-modal-details">';
+                if ($showSku) {
+                    $html .= '<span class="panth-oi-modal-sku">SKU: ' . $mSku . '</span>';
+                }
+                if ($showOptions) {
+                    $options = $this->getItemOptions($modalItem);
+                    foreach ($options as $opt) {
+                        $html .= '<span class="panth-oi-modal-option">' . $this->esc($opt['label']) . ': ' . $this->esc($opt['value']) . '</span>';
+                    }
+                }
+                $html .= '</div></div>';
+
+                $html .= '<div class="panth-oi-modal-right">';
+                if ($showQty) {
+                    $html .= '<span class="panth-oi-modal-qty">&times;' . $mQty . '</span>';
+                }
+                if ($showPrice) {
+                    $price = $this->priceCurrency->format((float) $modalItem->getPrice(), false, PriceCurrencyInterface::DEFAULT_PRECISION, null, $currencyCode);
+                    $rowTotal = $this->priceCurrency->format((float) $modalItem->getRowTotal(), false, PriceCurrencyInterface::DEFAULT_PRECISION, null, $currencyCode);
+                    $html .= '<span class="panth-oi-modal-price">' . $price . '</span>';
+                    $html .= '<span class="panth-oi-modal-rowtotal">' . $rowTotal . '</span>';
+                }
+                if ($showFulfillment) {
+                    $html .= $this->renderFulfillment($modalItem);
+                }
+                $html .= '</div>';
+                $html .= '</div>';
+                $idx++;
+            }
+
+            $html .= '</div>'; // modal-body
+            $html .= '</div>'; // modal
+            $html .= '</div>'; // backdrop
         }
 
         $html .= '</div>';

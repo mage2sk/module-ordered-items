@@ -6,6 +6,7 @@
             <general>
                 <enabled>1</enabled>
                 <max_visible>3</max_visible>
+                <popup_threshold>10</popup_threshold>
             </general>
             <display>
                 <show_thumbnail>1</show_thumbnail>
