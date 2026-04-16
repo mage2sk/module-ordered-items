@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <panth_ordered_items>
+            <general>
+                <enabled>1</enabled>
+                <max_visible>3</max_visible>
+            </general>
+            <display>
+                <show_thumbnail>1</show_thumbnail>
+                <show_sku>1</show_sku>
+                <show_price>1</show_price>
+                <show_qty>1</show_qty>
+                <show_options>1</show_options>
+                <show_fulfillment>1</show_fulfillment>
+                <show_summary>1</show_summary>
+                <show_product_link>1</show_product_link>
+            </display>
+        </panth_ordered_items>
+    </default>
+</config>

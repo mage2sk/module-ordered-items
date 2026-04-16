@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="panth_ordered_items" translate="label" sortOrder="170"
+                 showInDefault="1" showInWebsite="0" showInStore="0">
+            <label>Ordered Items Grid</label>
+            <tab>panth</tab>
+            <resource>Panth_OrderedItems::config</resource>
+
+            <group id="general" translate="label" sortOrder="10"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General Settings</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Order Items Column</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Show the Order Items column in the admin Sales Order Grid.</comment>
+                </field>
+                <field id="max_visible" translate="label comment" type="text" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Max Visible Items</label>
+                    <validate>validate-digits</validate>
+                    <comment>Number of items shown before "show more" link. Default: 3</comment>
+                </field>
+            </group>
+
+            <group id="display" translate="label" sortOrder="20"
+                   showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Display Options</label>
+                <comment>Choose which information to show for each ordered item in the grid column.</comment>
+                <field id="show_thumbnail" translate="label" type="select" sortOrder="10"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Product Thumbnail</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="show_sku" translate="label" type="select" sortOrder="20"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show SKU</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="show_price" translate="label" type="select" sortOrder="30"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Price</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="show_qty" translate="label" type="select" sortOrder="40"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Quantity</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="show_options" translate="label comment" type="select" sortOrder="50"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Product Options</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Size, Color, and other configurable attributes.</comment>
+                </field>
+                <field id="show_fulfillment" translate="label comment" type="select" sortOrder="60"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Fulfillment Status</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Invoiced, Shipped, Refunded, Canceled status badges per item.</comment>
+                </field>
+                <field id="show_summary" translate="label comment" type="select" sortOrder="70"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Items Summary</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Total items count and total units badge at the top.</comment>
+                </field>
+                <field id="show_product_link" translate="label comment" type="select" sortOrder="80"
+                       showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Link Product Name to Product Edit</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Click product name to open product editor in new tab.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
