@@ -165,6 +165,10 @@ Navigate to **Sales > Orders** — the "Order Items" column appears automaticall
 
 Navigate to **Stores > Configuration > Panth Extensions > Ordered Items Grid**.
 
+![Admin Configuration — Ordered Items Grid](docs/admin-config-preview.png)
+
+*Every element in the Order Items column is independently toggleable from admin config.*
+
 ### General Settings
 
 | Setting | Default | Description |
