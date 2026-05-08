@@ -2,15 +2,14 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
     <group id="default">
+        <job name="panth_ordereditems_send_heartbeat" instance="Panth\OrderedItems\Cron\SendHeartbeat" method="execute">
+            <schedule>25 4 * * *</schedule>
+        </job>
         <!--
           Daily heartbeat. Conditional skip inside the cron class if
           Panth_Core is enabled (Core owns site-level heartbeat). The
           minute offset is staggered per module so independent sites
           don't all stampede the receiver at the same instant.
         -->
-        <job name="panth_ordereditems_send_heartbeat"
-             instance="Panth\OrderedItems\Cron\SendHeartbeat" method="execute">
-            <schedule>25 4 * * *</schedule>
-        </job>
     </group>
 </config>

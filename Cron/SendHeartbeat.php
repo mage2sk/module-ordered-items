@@ -1,8 +1,8 @@
 <?php
 /**
- * Daily heartbeat cron — only fires when Panth_Core is NOT enabled.
- * When Core is present and enabled it owns the site-level heartbeat;
- * this module short-circuits to avoid duplicate pings.
+ * Daily heartbeat cron for Panth_OrderedItems. Skips if Panth_Core is
+ * enabled, because Core handles the heartbeat for the whole site (and
+ * we don't want every sibling module's cron stampeding the receiver).
  */
 declare(strict_types=1);
 
@@ -22,7 +22,7 @@ class SendHeartbeat
     public function execute(): void
     {
         if ($this->moduleManager->isEnabled('Panth_Core')) {
-            return; // Core handles the heartbeat for the whole site
+            return;
         }
         $this->reporter->reportHeartbeat();
     }
