@@ -1,11 +1,4 @@
 <?php
-/**
- * Copyright © Panth Infotech. All rights reserved.
- *
- * Renders ordered items with thumbnails, product details, options,
- * pricing, and fulfillment status inside the admin Sales Order Grid.
- * All display elements are admin-configurable via system.xml.
- */
 declare(strict_types=1);
 
 namespace Panth\OrderedItems\Ui\Component\Listing\Column;
@@ -127,7 +120,7 @@ class OrderItems extends Column
             $isHidden = $count > $maxVisible && !$usePopup;
             $hidden = $isHidden ? ' data-panth-oi-hidden style="display:none;"' : '';
             if ($usePopup && $count > $maxVisible) {
-                break; // Don't render more than maxVisible inline for popup mode
+                break;
             }
 
             $name = $this->esc((string) $orderItem->getName());
@@ -190,11 +183,10 @@ class OrderItems extends Column
                 $html .= $this->renderFulfillment($orderItem);
             }
 
-            $html .= '</div>'; // info
-            $html .= '</div>'; // item
+            $html .= '</div>';
+            $html .= '</div>';
         }
 
-        // Show more/less toggle (for non-popup mode: 4 to popupThreshold items)
         if ($total > $maxVisible && !$usePopup) {
             $remaining = $total - $maxVisible;
             $html .= '<div class="panth-oi-toggle">';
@@ -216,11 +208,9 @@ class OrderItems extends Column
                 . 'onclick="event.stopPropagation();var m=document.getElementById(\'' . $modalId . '\');m.style.display=\'flex\';panthOiPaginate(\'' . $modalId . '\',1);return false;">'
                 . 'View all ' . $total . ' items</a>';
 
-            // Modal
             $html .= '<div id="' . $modalId . '" class="panth-oi-modal-backdrop" onclick="if(event.target===this){this.style.display=\'none\';}">';
             $html .= '<div class="panth-oi-modal">';
 
-            // Header
             $html .= '<div class="panth-oi-modal-header">';
             $html .= '<div class="panth-oi-modal-title">';
             $html .= '<h3>Order #' . $incrementId . '</h3>';
@@ -229,7 +219,6 @@ class OrderItems extends Column
             $html .= '<button type="button" class="panth-oi-modal-close" onclick="event.stopPropagation();this.closest(\'.panth-oi-modal-backdrop\').style.display=\'none\';">&times;</button>';
             $html .= '</div>';
 
-            // Toolbar: page size + pagination info
             $html .= '<div class="panth-oi-modal-toolbar">';
             $html .= '<div class="panth-oi-modal-perpage">';
             $html .= '<label>Show:</label>';
@@ -248,7 +237,6 @@ class OrderItems extends Column
             $html .= '</div>';
             $html .= '</div>';
 
-            // Body with all items (pagination controlled via JS)
             $html .= '<div class="panth-oi-modal-body" data-total="' . $total . '">';
 
             $idx = 0;
@@ -302,9 +290,9 @@ class OrderItems extends Column
                 $idx++;
             }
 
-            $html .= '</div>'; // modal-body
-            $html .= '</div>'; // modal
-            $html .= '</div>'; // backdrop
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '</div>';
         }
 
         $html .= '</div>';
@@ -371,7 +359,6 @@ class OrderItems extends Column
                 }
             }
         } catch (\Throwable $e) {
-            // placeholder
         }
         return $this->imageHelper->getDefaultPlaceholderUrl('thumbnail');
     }
