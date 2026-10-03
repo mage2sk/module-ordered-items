@@ -1,0 +1,48 @@
+{
+    "name": "mage2kishan/module-ordered-items",
+    "description": "Panth Ordered Items \u2014 adds a rich 'Order Items' column to the Magento 2 admin Sales Order Grid. Displays product thumbnails, names, SKUs, and quantities directly in the grid with a collapsible 'show more' link for orders with many items. No configuration required \u2014 install and it works.",
+    "type": "magento2-module",
+    "version": "1.0.11",
+    "license": "proprietary",
+    "keywords": [
+        "magento2",
+        "magento2-module",
+        "panth",
+        "order-grid",
+        "ordered-items",
+        "sales-grid",
+        "order-items-column",
+        "admin-grid"
+    ],
+    "homepage": "https://kishansavaliya.com",
+    "support": {
+        "email": "kishansavaliyakb@gmail.com",
+        "source": "https://kishansavaliya.com"
+    },
+    "authors": [
+        {
+            "name": "Kishan Savaliya",
+            "email": "kishansavaliyakb@gmail.com",
+            "homepage": "https://kishansavaliya.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "~8.1.0||~8.2.0||~8.3.0||~8.4.0",
+        "magento/framework": "^103.0",
+        "magento/module-backend": "^102.0",
+        "magento/module-config": "^101.2",
+        "magento/module-sales": "^103.0",
+        "magento/module-catalog": "^103.0 || ^104.0",
+        "magento/module-ui": "^101.2",
+        "mage2kishan/module-core": "^1.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Panth\\OrderedItems\\": ""
+        }
+    }
+}
